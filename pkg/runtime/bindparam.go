@@ -67,9 +67,9 @@ func BindStyledParameterWithLocation(style string, explode bool, paramName strin
 	}
 
 	// The destination implement encoding.TextUnmarshaler
-	if tu, ok := dst.(encoding.TextUnmarshaler); ok {
+	if tu, ok := dest.(encoding.TextUnmarshaler); ok {
 		if err := tu.UnmarshalText([]byte(value)); err != nil {
-			return fmt.Errorf("error unmarshaling '%s' as %T: %s", value, dst, err)
+			return fmt.Errorf("error unmarshaling '%s' as %T: %s", value, dest, err)
 		}
 
 		return nil
