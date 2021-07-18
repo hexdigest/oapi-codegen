@@ -14,6 +14,7 @@
 package runtime
 
 import (
+	"encoding"
 	"encoding/json"
 	"fmt"
 	"net/url"
@@ -63,6 +64,15 @@ func BindStyledParameterWithLocation(style string, explode bool, paramName strin
 		}
 	default:
 		// Headers and cookies aren't escaped.
+	}
+
+	// The destination implement encoding.TextUnmarshaler
+	if tu, ok := dst.(encoding.TextUnmarshaler); ok {
+		if err := tu.UnmarshalText([]byte(value)); err != nil {
+			return fmt.Errorf("error unmarshaling '%s' as %T: %s", value, dst, err)
+		}
+
+		return nil
 	}
 
 	// Everything comes in by pointer, dereference it
