@@ -14,6 +14,7 @@
 package runtime
 
 import (
+	"encoding"
 	"errors"
 	"fmt"
 	"reflect"
@@ -45,6 +46,13 @@ func BindStringToObject(src string, dst interface{}) error {
 	// passing the destination by value.
 	if !v.CanSet() {
 		return errors.New("destination is not settable")
+	}
+
+	// The destination implement encoding.TextUnmarshaler
+	if tu, ok := dst.(encoding.TextUnmarshaler); ok {
+		if err := tu.UnmarshalText([]byte(src)); err != nil {
+			return fmt.Errorf("error unmarshaling '%s' as %T: %s", src, dst, err)
+		}
 	}
 
 	switch t.Kind() {
